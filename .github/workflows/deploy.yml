@@ -6,12 +6,10 @@ on:
 
 jobs:
   deploy:
-    name: Deploy via SSH
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
       - name: Add SSH known host
         run: |
@@ -24,10 +22,10 @@ jobs:
           host: ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
           key: ${{ secrets.LS_SSH_KEY }}
-          # key に秘密鍵のテキストを直接渡す形式のため key_path は不要
           script: |
             echo "=== Starting deploy on Lightsail ==="
             cd ~/traiforce
             docker compose pull
             docker compose up -d --build
-            docker compose logs -f --tail 50
+            echo "=== Last 50 log lines ==="
+            docker compose logs --tail 50
