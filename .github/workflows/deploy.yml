@@ -2,21 +2,31 @@ name: Deploy to Lightsail
 
 on:
   push:
-    branches: [master]  # mainではなくmasterブランチで動作
+    branches: [master]
 
 jobs:
   deploy:
+    name: Deploy via SSH
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  # 最新コードを取得
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Setup SSH key
+      - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.LS_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
+
+      - name: Debug SSH files
+        run: |
+          echo "--- Listing ~/.ssh directory ---"
+          ls -l ~/.ssh
+          echo "--- First 5 lines of SSH key ---"
+          head -n 5 ~/.ssh/id_ed25519
+        # ※ このステップで秘密鍵が表示されるかご確認ください（ログに残ります）
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
@@ -25,6 +35,7 @@ jobs:
           username: ${{ secrets.LS_SSH_USER }}
           key_path: ~/.ssh/id_ed25519
           script: |
+            echo "=== Deploy: pulling & restarting containers ==="
             cd ~/traiforce
             docker compose pull
             docker compose up -d --build
