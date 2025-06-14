@@ -13,29 +13,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH key
+      - name: Add SSH known host
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.LS_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
-
-      - name: Debug SSH files
-        run: |
-          echo "--- Listing ~/.ssh directory ---"
-          ls -l ~/.ssh
-          echo "--- First 5 lines of SSH key ---"
-          head -n 5 ~/.ssh/id_ed25519
-        # ※ このステップで秘密鍵が表示されるかご確認ください（ログに残ります）
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
-          key_path: ~/.ssh/id_ed25519
+          key: ${{ secrets.LS_SSH_KEY }}
+          # key に秘密鍵のテキストを直接渡す形式のため key_path は不要
           script: |
-            echo "=== Deploy: pulling & restarting containers ==="
+            echo "=== Starting deploy on Lightsail ==="
             cd ~/traiforce
             docker compose pull
             docker compose up -d --build
