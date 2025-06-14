@@ -1,0 +1,31 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches: [master]  # mainではなくmasterブランチで動作
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3  # 最新コードを取得
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.LS_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.LS_IP }}
+          username: ${{ secrets.LS_SSH_USER }}
+          key_path: ~/.ssh/id_ed25519
+          script: |
+            cd ~/traiforce
+            docker compose pull
+            docker compose up -d --build
+            docker compose logs -f --tail 50
