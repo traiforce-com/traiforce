@@ -2,15 +2,16 @@ name: Deploy to Lightsail
 
 on:
   push:
-    branches: [main]
+    branches: [master]  # mainではなくmasterブランチで動作
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Set up SSH key
+    steps:
+      - uses: actions/checkout@v3  # 最新コードを取得
+
+      - name: Setup SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.LS_SSH_KEY }}" > ~/.ssh/id_ed25519
@@ -18,7 +19,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
