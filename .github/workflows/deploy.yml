@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy to Lightsail
 
 on:
@@ -15,6 +16,7 @@ jobs:
         run: |
           mkdir -p "$HOME/.ssh"
           ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
+
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
