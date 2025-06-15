@@ -18,7 +18,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
 
       - name: Deploy via SSH
-        uses: appleboy/scp-action@v1
+        uses: appleboy/ssh-action@master
         with:
           host:     ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
