@@ -9,35 +9,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. リポジトリをチェックアウト
       - name: Checkout repository
-        uses: actions/checkout@v3       # リポジトリをクローンするステップ:contentReference[oaicite:5]{index=5}
-        with:
-          fetch-depth: 0                # フル履歴を取得
+        uses: actions/checkout@v3       # GitHub 公式アクション
 
-      # 2. SSH エージェントをセットアップ
       - name: Setup SSH agent
-        uses: webfactory/[email protected]  # 秘密鍵をメモリ上にロード:contentReference[oaicite:6]{index=6}
+        uses: webfactory/[email protected]   # 秘密鍵を ssh-agent に登録
 
-      # 3. ホスト鍵を known_hosts に追加
-      - name: Add Lightsail to known_hosts
+      - name: Add Lightsail host key
         run: |
-          mkdir -p $HOME/.ssh
-          ssh-keyscan -H ${{ secrets.LS_IP }} >> $HOME/.ssh/known_hosts  # ホスト鍵検証をスキップしない:contentReference[oaicite:7]{index=7}
+          mkdir -p "$HOME/.ssh"
+          ssh-keyscan -H ${{ secrets.LS_IP }} >> "$HOME/.ssh/known_hosts"
 
-      # 4. SSH 経由でデプロイ実行
       - name: Deploy via SSH
-        uses: appleboy/[email protected]  # リモートコマンド実行アクション:contentReference[oaicite:8]{index=8}
+        uses: appleboy/[email protected]   # リモートサーバーでコマンド実行
         with:
-          host: ${{ secrets.LS_IP }}        # Lightsail の静的 IP
-          username: ${{ secrets.LS_SSH_USER }}  # SSH ユーザー名
-          key: ${{ secrets.LS_SSH_KEY }}        # 秘密鍵（エージェント経由で提供）
-          port: 22
+          host:     ${{ secrets.LS_IP }}
+          username: ${{ secrets.LS_SSH_USER }}
+          key:      ${{ secrets.LS_SSH_KEY }}
           script: |
-            echo "=== Starting deploy on Lightsail ==="
+            echo "=== Deploy start ==="
             cd ~/traiforce
             git pull origin master
             docker compose pull
             docker compose up -d --build
-            echo "=== Last 50 log lines ==="
             docker compose logs --tail 50
+            echo "=== Deploy done ==="
