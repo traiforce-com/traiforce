@@ -1,18 +1,28 @@
-# Dockerfile
-FROM node:20-alpine
-
-# 作業ディレクトリ作成
+# ─── build stage ───
+FROM node:20-alpine AS builder
 WORKDIR /app
 
-# 依存ファイルコピー＆インストール
+# 依存だけ先にインストール（キャッシュ活用）
 COPY package*.json ./
-RUN npm install
+RUN npm ci --omit=dev
 
-# アプリ全体をコピー
+# ソースコードをコピーしてビルド
 COPY . .
+RUN npm run build
 
-# ポート開放
+# ─── production stage ───
+FROM node:20-alpine AS production
+WORKDIR /app
+
+# 本番依存のみインストール
+COPY package*.json ./
+RUN npm ci --production
+
+# ビルド成果物だけをコピー
+COPY --from=builder /app/.output ./.output
+
 EXPOSE 3000
+ENV NODE_ENV=production
 
-# デフォルトコマンド（devサーバ）
-CMD ["npm", "run", "dev"]
+# 本番サーバ起動
+CMD ["node", ".output/server/index.mjs"]
