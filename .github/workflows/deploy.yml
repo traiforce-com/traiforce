@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy to Lightsail
 
 on:
@@ -9,30 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) リポジトリ取得
+      # 1) リポジトリをチェックアウト
       - name: Checkout repository
-        uses: actions/checkout@v3     # ← 公式アクションは v3 で固定
+        uses: actions/checkout@v3
 
-      # 2) SSH エージェントを起動し秘密鍵をロード
-      - name: Setup SSH agent
-        uses: webfactory/[email protected]  # ← 最新安定タグ。必ず @ を付ける :contentReference[oaicite:2]{index=2}
-        with:
-          ssh-private-key: ${{ secrets.LS_SSH_KEY }}
-
-      # 3) Lightsail のホスト鍵を known_hosts に追加
+      # 2) Lightsail のホスト鍵を known_hosts に追加
       - name: Add Lightsail host key
         run: |
           mkdir -p "$HOME/.ssh"
-          ssh-keyscan -H ${{ secrets.LS_IP }} >> "$HOME/.ssh/known_hosts"   # ホスト検証を安全に回避 :contentReference[oaicite:3]{index=3}
+          ssh-keyscan -H ${{ secrets.LS_IP }} >> "$HOME/.ssh/known_hosts"
 
-      # 4) SSH でデプロイ
+      # 3) SSH でリモートデプロイ
       - name: Deploy via SSH
-        uses: appleboy/[email protected]  # ← v1.2.1 は Release ページで案内されている安定タグ :contentReference[oaicite:4]{index=4}
+        uses: appleboy/[email protected]      # ← ここだけで鍵を扱う
         with:
           host:     ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
           key:      ${{ secrets.LS_SSH_KEY }}
-          port: 22
+          port:     22
           script: |
             echo "=== Deploy start ==="
             cd ~/traiforce
