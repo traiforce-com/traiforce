@@ -9,19 +9,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      # 1. リポジトリをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0   # フルクローン（履歴が必要な場合）
 
-      - name: Add SSH known host
+      # 2. SSH エージェントをセットアップ
+      - name: Setup SSH agent
+        uses: webfactory/[email protected]
+        with:
+          ssh-private-key: ${{ secrets.LS_SSH_KEY }}
+
+      # 3. ホスト鍵を追加
+      - name: Add Lightsail to known_hosts
         run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.LS_IP }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ secrets.LS_IP }} >> $HOME/.ssh/known_hosts
 
+      # 4. SSH 経由でデプロイ実行
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/[email protected]
         with:
           host: ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
           key: ${{ secrets.LS_SSH_KEY }}
+          port: 22
           script: |
             echo "=== Starting deploy on Lightsail ==="
             cd ~/traiforce
