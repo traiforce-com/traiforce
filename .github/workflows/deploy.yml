@@ -1,9 +1,7 @@
 name: Deploy to Lightsail
-
 on:
   push:
     branches: [master]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,10 +17,10 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@master
         with:
-          host:     ${{ secrets.LS_IP }}
+          host: ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
-          key:      ${{ secrets.LS_SSH_KEY }}
-          port:     22
+          key: ${{ secrets.LS_SSH_KEY }}
+          port: 22
           script: |
             echo "=== Deploy start ==="
             cd ~/traiforce
