@@ -22,7 +22,7 @@ jobs:
 
       # 3) SSH でリモートデプロイ
       - name: Deploy via SSH
-        uses: appleboy/[email protected]      # ← ここだけで鍵を扱う
+        uses: appleboy/scp-action@v1      # ← ここだけで鍵を扱う
         with:
           host:     ${{ secrets.LS_IP }}
           username: ${{ secrets.LS_SSH_USER }}
