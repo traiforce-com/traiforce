@@ -1,6 +1,6 @@
 <template>
   <div>
-  index3
+  index5
     <h1 class="text-3xl font-bold mb-4">Welcome to trAIforce</h1>
     <p class="mb-4">This is the home page of your Nuxt.js application.</p>
     <NuxtLink to="/about" class="text-blue-500 hover:underline">Go to About Page</NuxtLink>
