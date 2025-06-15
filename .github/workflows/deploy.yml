@@ -1,5 +1,5 @@
 # .github/workflows/deploy.yml
-name: Deploy to Lightsail
+name: Deploy to Lightsail2
 
 on:
   push:
