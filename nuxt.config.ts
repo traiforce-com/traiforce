@@ -35,5 +35,11 @@ export default defineNuxtConfig({
     webpack: {
       poll: true
     }
-  }
+  },
+  head: {
+    link: [{
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&display=swap",
+    }],
+  },
 })
