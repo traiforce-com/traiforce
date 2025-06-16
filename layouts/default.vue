@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 @import "@/assets/css/tailwind.css";
 
 .traiforce-font {
