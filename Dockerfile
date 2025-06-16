@@ -1,18 +1,15 @@
-# Dockerfile
-FROM node:20-alpine
-
-# 作業ディレクトリ作成
+# 1. Build ステージ
+FROM node:20-alpine AS build
 WORKDIR /app
-
-# 依存ファイルコピー＆インストール
 COPY package*.json ./
-RUN npm install
-
-# アプリ全体をコピー
+RUN npm ci
 COPY . .
+RUN npm run build
 
-# ポート開放
-EXPOSE 3000
-
-# デフォルトコマンド（devサーバ）
-CMD ["npm", "run", "dev"]
+# 2. Production ステージ
+FROM node:20-alpine AS runtime
+WORKDIR /app
+COPY --from=build /app/.nuxt ./.nuxt
+COPY --from=build /app/package*.json ./
+RUN npm ci --omit=dev
+CMD ["npm", "run", "start"]
