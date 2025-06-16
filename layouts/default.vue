@@ -15,6 +15,8 @@
 </template>
 
 <style scoped>
+@import "@/assets/css/tailwind.css";
+
 .traiforce-font {
   font-family: "Noto Sans JP", sans-serif;
   font-optical-sizing: auto;
