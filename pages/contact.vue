@@ -2,7 +2,7 @@
   <div class="mx-auto">
     <div class="text-center mt-10">
       <h1 class="text-5xl">Contact</h1>
-      <p>まずはお気軽にご相談ください。</p>
+      <p class="mt-3">まずはお気軽にご相談ください。</p>
       <form class="max-w-md mx-auto">
         <label class="block text-left mt-10">お名前</label>
         <input type="text" class="border border-gray-300 rounded-md p-2 w-full" />

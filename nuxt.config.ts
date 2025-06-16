@@ -1,7 +1,6 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
-  css: ['~/assets/css/tailwind.css'],
+  css: ['@/assets/css/app.css'],
   compatibilityDate: '2025-05-15',
   devtools: {
     enabled: true,
@@ -35,11 +34,5 @@ export default defineNuxtConfig({
     webpack: {
       poll: true
     }
-  },
-  head: {
-    link: [{
-      rel: "stylesheet",
-      href: "https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&display=swap",
-    }],
-  },
+  }
 })
